@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { Loader2 } from "lucide-react";
@@ -29,12 +29,23 @@ function PageFallback() {
   );
 }
 
+function LegacyLeaveRedirect() {
+  const location = useLocation();
+  const search = location.search || "";
+  return <Navigate to={`/app/leave${search}`} replace />;
+}
+
 export default function App() {
   return (
     <Suspense fallback={<PageFallback />}>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/announcements" element={<Navigate to="/app/announcements" replace />} />
+        <Route path="/performance" element={<Navigate to="/app/performance" replace />} />
+        <Route path="/recruitment" element={<Navigate to="/app/recruitment" replace />} />
+        <Route path="/payroll" element={<Navigate to="/app/payroll" replace />} />
+        <Route path="/leave" element={<LegacyLeaveRedirect />} />
 
         <Route
           path="/app"
