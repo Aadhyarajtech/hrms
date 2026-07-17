@@ -33,6 +33,10 @@ function isWeekend(d: Date) {
   return day === 0 || day === 6;
 }
 const PASSWORD_HASH = bcrypt.hashSync("Welcome@123", 10);
+// Fixed custom passwords for the two top-level admin accounts.
+// Change the strings below to whatever passwords you want them to log in with.
+const SUPER_ADMIN_PASSWORD_HASH = bcrypt.hashSync("SuperAdmin@2026!", 10);
+const HR_ADMIN_PASSWORD_HASH = bcrypt.hashSync("HrAdmin@2026!", 10);
 
 // ---------------------------------------------------------------------------
 // Name pools (generic Indian first/last names — not tied to real individuals)
@@ -372,8 +376,11 @@ async function seed() {
   function findByTitle(title: string) {
     return allEmployees.filter((e) => e.designationTitle === title);
   }
-  function reassignDemoAccount(employee: SeededEmployee, email: string, role: string) {
-    run(`UPDATE users SET email = :email, role = :role WHERE id = :userId`, { email, role, userId: employee.userId });
+  function reassignDemoAccount(employee: SeededEmployee, email: string, role: string, passwordHash?: string) {
+    run(
+      `UPDATE users SET email = :email, role = :role, password_hash = COALESCE(:passwordHash, password_hash) WHERE id = :userId`,
+      { email, role, userId: employee.userId, passwordHash: passwordHash ?? null }
+    );
     employee.email = email;
     return employee;
   }
@@ -385,8 +392,8 @@ async function seed() {
   const financeManager = findByTitle("Finance Manager")[0];
   const swEngineeringReport = allEmployees.find((e) => e.managerId === engManager?.id) ?? findByTitle("Senior Software Engineer")[0];
 
-  reassignDemoAccount(itVp, "admin@aadhyaraj.com", "SUPER_ADMIN");
-  reassignDemoAccount(hrVp, "hr.admin@aadhyaraj.com", "HR_ADMIN");
+  reassignDemoAccount(itVp, "admin@aadhyaraj.com", "SUPER_ADMIN", SUPER_ADMIN_PASSWORD_HASH);
+  reassignDemoAccount(hrVp, "hr.admin@aadhyaraj.com", "HR_ADMIN", HR_ADMIN_PASSWORD_HASH);
   reassignDemoAccount(engManager, "manager.demo@aadhyaraj.com", "MANAGER");
   reassignDemoAccount(taSpecialist, "recruiter.demo@aadhyaraj.com", "RECRUITER");
   reassignDemoAccount(financeManager, "finance.demo@aadhyaraj.com", "FINANCE");
@@ -735,15 +742,15 @@ async function seed() {
 
   console.log("\nSeed complete!");
   console.log("----------------------------------------------------------------");
-  console.log("Demo accounts (all use password: Welcome@123)");
-  console.log(`  Super Admin    -> admin@aadhyaraj.com`);
-  console.log(`  HR Admin       -> hr.admin@aadhyaraj.com`);
-  console.log(`  Manager        -> manager.demo@aadhyaraj.com`);
-  console.log(`  Recruiter      -> recruiter.demo@aadhyaraj.com`);
-  console.log(`  Finance        -> finance.demo@aadhyaraj.com`);
-  console.log(`  Employee       -> employee.demo@aadhyaraj.com`);
+  console.log("Demo accounts");
+  console.log(`  Super Admin    -> admin@aadhyaraj.com          / SuperAdmin@2026!`);
+  console.log(`  HR Admin       -> hr.admin@aadhyaraj.com       / HrAdmin@2026!`);
+  console.log(`  Manager        -> manager.demo@aadhyaraj.com   / Welcome@123`);
+  console.log(`  Recruiter      -> recruiter.demo@aadhyaraj.com / Welcome@123`);
+  console.log(`  Finance        -> finance.demo@aadhyaraj.com   / Welcome@123`);
+  console.log(`  Employee       -> employee.demo@aadhyaraj.com  / Welcome@123`);
   console.log("  (Every other seeded employee can also log in with their");
-  console.log("   @aadhyaraj.com email and the same password.)");
+  console.log("   @aadhyaraj.com email and the password Welcome@123.)");
   console.log("----------------------------------------------------------------");
 }
 
