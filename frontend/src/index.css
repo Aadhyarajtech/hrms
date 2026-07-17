@@ -1,13 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
   }
   body {
-    @apply bg-canvas text-ink font-sans antialiased;
+    background-color: #fafaf8;
+    color: #1a1d29;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
     background-color: theme("colors.brand.200");
@@ -46,7 +50,8 @@
   .skeleton {
     background-image: linear-gradient(90deg, #f1f0ee 0px, #f8f7f5 40px, #f1f0ee 80px);
     background-size: 600px;
-    @apply animate-shimmer rounded-lg;
+    border-radius: 0.5rem;
+    animation: shimmer 1.6s linear infinite;
   }
 }
 

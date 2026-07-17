@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "lib": ["ES2021"],
     "outDir": "dist",
     "rootDir": "src",
@@ -15,10 +15,9 @@
     "sourceMap": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    // "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "prisma/seed.ts"],

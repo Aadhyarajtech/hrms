@@ -2,6 +2,7 @@
 import bcrypt from "bcryptjs";
 import { db, run, one, all, runMigrations, nowIso } from "./connection";
 import { genId } from "@/utils/id";
+import { processPayrollRun, markRunPaid } from "../modules/payroll/payroll.repository";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -689,7 +690,6 @@ async function seed() {
   }
 
   // Process the last 3 months as PAID runs (reuses the same logic the API exposes)
-  const { processPayrollRun, markRunPaid } = await import("@/modules/payroll/payroll.repository");
   for (let i = 3; i >= 1; i--) {
     const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
     const runRecord = processPayrollRun(d.getMonth() + 1, d.getFullYear()) as any;
